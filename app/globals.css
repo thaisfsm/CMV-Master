@@ -21,4 +21,4 @@
 .brand-lockup--card .brand-mark{width:104px;height:112px}
 .brand-lockup--card .wordmark-main{font-size:24px}
 .brand-lockup--card .wordmark-tagline{max-width:285px;margin:8px auto 0;font-size:7px;letter-spacing:.9px}
-@media(max-width:760px){.brand-lockup--hero{justify-content:center;gap:8px}.brand-lockup--hero .brand-mark{width:70px;height:76px}.brand-lockup--hero .wordmark-main{font-size:22px}.brand-lockup--hero .wordmark-tagline{max-width:240px;margin-top:6px;font-size:6px;letter-spacing:.7px}.brand-lockup--compact{gap:0;padding:0 0 23px;justify-content:center}.brand-lockup--compact .wordmark{display:none}}
+@media(max-width:760px){.brand-lockup--hero{justify-content:center;gap:8px}.brand-lockup--hero .brand-mark{width:70px;height:76px}.brand-lockup--hero .wordmark span{display:block}.brand-lockup--hero .wordmark-main{font-size:22px}.brand-lockup--hero .wordmark-tagline{max-width:240px;margin-top:6px;font-size:6px;letter-spacing:.7px}.brand-lockup--compact{gap:0;padding:0 0 23px;justify-content:center}.brand-lockup--compact .wordmark{display:none}}
