@@ -6,7 +6,7 @@ Aplicação SaaS em construção para implantação e gestão de CMV em negócio
 
 O primeiro incremento contém autenticação por e-mail/senha, inicialização do espaço da Pizzaria Enrico com os dados fornecidos, seis etapas, roteiro diagnóstico com respostas persistidas e marcadas como declaradas, tarefas, cadastros conectados de produtos/ingredientes/fornecedores/receitas e cálculos determinísticos de conversão/custos. Indicadores financeiros ficam vazios até existirem dados reais.
 
-Compras, estoque, perdas, treinamento, fichas técnicas, PDFs, evidências em storage e relatórios ainda não têm telas funcionais. Não são simulados. A logo aprovada não foi incluída porque a imagem de referência não veio com o texto recebido.
+Compras, estoque, perdas, treinamento, fichas técnicas, PDFs, evidências em storage e relatórios ainda não têm telas funcionais. Não são simulados. A logo oficial está em `public/logo-cmv-mestre.png`.
 
 ## Requisitos
 
