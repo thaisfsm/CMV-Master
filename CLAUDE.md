@@ -34,5 +34,6 @@ nunca comitar `.env*` nem usar `service_role` no navegador.
 ## Regras
 
 - Trabalhar em branch própria; `main` só via pull request.
+- `supabase/migrations/`: as 7 migrations de `20261031211507` em diante são cópias exatas (conferidas por MD5) das aplicadas no banco `cmv-mestre`. `202610310001_initial_schema.sql` difere da `initial_schema` remota (`20261031211139`); reconciliar antes de recriar o banco do zero.
 - Não aplicar migrations nem alterar Supabase/Vercel remotos sem autorização da Thaís.
 - Não simular dados: módulos sem backend mostram estado vazio de propósito.
