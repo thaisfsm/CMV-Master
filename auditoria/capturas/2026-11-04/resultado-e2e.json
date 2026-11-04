@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-04",
+  "base": "http://127.0.0.1:3000",
+  "results": [
+    {
+      "name": "login: tela de acesso",
+      "ok": true
+    },
+    {
+      "name": "autenticação: senha errada mostra mensagem em português",
+      "ok": true
+    },
+    {
+      "name": "autenticação: criar conta de teste e preparar a Pizzaria Enrico",
+      "ok": true
+    },
+    {
+      "name": "sessão persiste após recarregar a página",
+      "ok": true
+    },
+    {
+      "name": "visitas: registrar visita diagnóstica",
+      "ok": true
+    },
+    {
+      "name": "diagnóstico: salvar, classificar, editar e manter histórico",
+      "ok": true
+    },
+    {
+      "name": "evidências: upload de foto com armazenamento privado e abertura por link assinado",
+      "ok": true
+    },
+    {
+      "name": "persistência: respostas continuam após recarregar",
+      "ok": true
+    },
+    {
+      "name": "tarefas: criar com responsável, editar e concluir",
+      "ok": true
+    },
+    {
+      "name": "dashboard reflete os registros",
+      "ok": true
+    },
+    {
+      "name": "implantação guiada",
+      "ok": true
+    },
+    {
+      "name": "consultor: orientação baseada nos dados, sem cálculo sem base",
+      "ok": true
+    },
+    {
+      "name": "central técnica",
+      "ok": true
+    },
+    {
+      "name": "compras e estoque (pendente, sem dados fictícios)",
+      "ok": true
+    },
+    {
+      "name": "perdas (pendente)",
+      "ok": true
+    },
+    {
+      "name": "treinamentos (pendente)",
+      "ok": true
+    },
+    {
+      "name": "relatório da visita com pendências e próximos passos",
+      "ok": true
+    },
+    {
+      "name": "visitas: histórico e concluir visita",
+      "ok": true
+    },
+    {
+      "name": "tema claro",
+      "ok": true
+    },
+    {
+      "name": "responsivo: celular",
+      "ok": true
+    },
+    {
+      "name": "tablet",
+      "ok": true
+    },
+    {
+      "name": "sair encerra a sessão",
+      "ok": true
+    },
+    {
+      "name": "sem erros de JavaScript na página",
+      "ok": true
+    }
+  ]
+}
