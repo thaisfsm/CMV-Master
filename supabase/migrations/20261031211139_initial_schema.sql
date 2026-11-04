@@ -1,5 +1,4 @@
 create extension if not exists pgcrypto;
-
 create table public.organizations (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -128,24 +127,17 @@ create table public.evidence_files (
   file_name text not null, media_type text, size_bytes bigint, sha256 text, uploaded_by uuid references auth.users(id),
   consent_recorded boolean not null default false, created_at timestamptz not null default now(), unique(bucket_id,storage_path)
 );
-
 create or replace function public.is_org_member(target_org uuid)
 returns boolean language sql stable security definer set search_path = public
 as $$ select exists(select 1 from public.memberships m where m.organization_id = target_org and m.user_id = auth.uid()) $$;
 create or replace function public.is_org_editor(target_org uuid)
 returns boolean language sql stable security definer set search_path = public
 as $$ select exists(select 1 from public.memberships m where m.organization_id = target_org and m.user_id = auth.uid() and m.role in ('owner','consultant')) $$;
-
 create or replace function public.check_establishment_tenant()
 returns trigger language plpgsql set search_path = public
-as $$
-begin
-  if not exists(select 1 from public.establishments e where e.id = new.establishment_id and e.organization_id = new.organization_id) then
-    raise exception 'Establishment does not belong to this organization';
-  end if;
-  if tg_table_name = 'tasks' and new.stage_id is not null and not exists(
-    select 1 from public.implementation_stages s where s.id = new.stage_id and s.establishment_id = new.establishment_id and s.organization_id = new.organization_id
-  ) then raise exception 'Stage does not belong to this establishment'; end if;
+as $$ begin
+  if not exists(select 1 from public.establishments e where e.id = new.establishment_id and e.organization_id = new.organization_id) then raise exception 'Establishment does not belong to this organization'; end if;
+  if tg_table_name = 'tasks' and new.stage_id is not null and not exists(select 1 from public.implementation_stages s where s.id = new.stage_id and s.establishment_id = new.establishment_id and s.organization_id = new.organization_id) then raise exception 'Stage does not belong to this establishment'; end if;
   return new;
 end $$;
 create trigger stages_tenant_check before insert or update on public.implementation_stages for each row execute function public.check_establishment_tenant();
@@ -164,15 +156,10 @@ create trigger trainings_tenant_check before insert or update on public.training
 create trigger evidence_tenant_check before insert or update on public.evidence_files for each row execute function public.check_establishment_tenant();
 create or replace function public.check_child_tenant()
 returns trigger language plpgsql set search_path = public
-as $$
-begin
-  if tg_table_name = 'purchase_items' and not exists(select 1 from public.purchases p where p.id = new.purchase_id and p.organization_id = new.organization_id) then
-    raise exception 'Purchase must belong to this organization';
-  elsif tg_table_name = 'inventory_items' and not exists(select 1 from public.inventory_counts c where c.id = new.inventory_count_id and c.organization_id = new.organization_id) then
-    raise exception 'Inventory count must belong to this organization';
-  elsif tg_table_name = 'training_participants' and not exists(select 1 from public.training_sessions s where s.id = new.training_id and s.organization_id = new.organization_id) then
-    raise exception 'Training must belong to this organization';
-  end if;
+as $$ begin
+  if tg_table_name = 'purchase_items' and not exists(select 1 from public.purchases p where p.id = new.purchase_id and p.organization_id = new.organization_id) then raise exception 'Purchase must belong to this organization';
+  elsif tg_table_name = 'inventory_items' and not exists(select 1 from public.inventory_counts c where c.id = new.inventory_count_id and c.organization_id = new.organization_id) then raise exception 'Inventory count must belong to this organization';
+  elsif tg_table_name = 'training_participants' and not exists(select 1 from public.training_sessions s where s.id = new.training_id and s.organization_id = new.organization_id) then raise exception 'Training must belong to this organization'; end if;
   return new;
 end $$;
 create trigger purchase_items_tenant_check before insert or update on public.purchase_items for each row execute function public.check_child_tenant();
@@ -180,50 +167,37 @@ create trigger inventory_items_tenant_check before insert or update on public.in
 create trigger training_participants_tenant_check before insert or update on public.training_participants for each row execute function public.check_child_tenant();
 create or replace function public.check_recipe_item_tenant()
 returns trigger language plpgsql set search_path = public
-as $$
-begin
-  if not exists(select 1 from public.recipes r join public.ingredients i on i.id = new.ingredient_id where r.id = new.recipe_id and r.organization_id = new.organization_id and i.organization_id = new.organization_id) then
-    raise exception 'Recipe and ingredient must belong to the same organization';
-  end if;
+as $$ begin
+  if not exists(select 1 from public.recipes r join public.ingredients i on i.id = new.ingredient_id where r.id = new.recipe_id and r.organization_id = new.organization_id and i.organization_id = new.organization_id) then raise exception 'Recipe and ingredient must belong to the same organization'; end if;
   return new;
 end $$;
 create trigger recipe_items_tenant_check before insert or update on public.recipe_items for each row execute function public.check_recipe_item_tenant();
 create or replace function public.check_stage_completion()
 returns trigger language plpgsql set search_path = public
-as $$
-declare task_total integer; task_done integer; response_total integer;
+as $$ declare task_total integer; task_done integer; response_total integer;
 begin
   if new.status = 'completed' and old.status <> 'completed' then
     if new.stage_number <> 1 then raise exception 'Approval criteria for this stage have not been configured'; end if;
-    select count(*), count(*) filter (where status = 'completed') into task_total, task_done
-      from public.tasks where stage_id = new.id;
+    select count(*), count(*) filter (where status = 'completed') into task_total, task_done from public.tasks where stage_id = new.id;
     select count(*) into response_total from public.diagnostic_responses where establishment_id = new.establishment_id;
-    if task_total < 6 or task_done <> task_total or response_total < 15 then
-      raise exception 'Diagnostic approval requires all tasks and 15 recorded topics';
-    end if;
+    if task_total < 6 or task_done <> task_total or response_total < 15 then raise exception 'Diagnostic approval requires all tasks and 15 recorded topics'; end if;
   end if;
   return new;
 end $$;
 create trigger stage_completion_gate before update of status on public.implementation_stages for each row execute function public.check_stage_completion();
-
-do $$
-declare t text;
-begin
-  foreach t in array array['memberships','establishments','implementation_stages','tasks','diagnostic_responses','audit_events','products','suppliers','ingredients','recipes','recipe_items','ingredient_price_history','purchases','purchase_items','inventory_counts','inventory_items','stock_movements','loss_cases','training_sessions','training_participants','evidence_files'] loop
-    execute format('alter table public.%I enable row level security', t);
-    execute format('create policy %I on public.%I for select using (public.is_org_member(organization_id))', t || '_read_members', t);
-    execute format('create policy %I on public.%I for insert with check (public.is_org_editor(organization_id))', t || '_insert_members', t);
-    execute format('create policy %I on public.%I for update using (public.is_org_editor(organization_id)) with check (public.is_org_editor(organization_id))', t || '_update_members', t);
-    execute format('create policy %I on public.%I for delete using (public.is_org_editor(organization_id))', t || '_delete_members', t);
-  end loop;
-end $$;
+do $$ declare t text;
+begin foreach t in array array['memberships','establishments','implementation_stages','tasks','diagnostic_responses','audit_events','products','suppliers','ingredients','recipes','recipe_items','ingredient_price_history','purchases','purchase_items','inventory_counts','inventory_items','stock_movements','loss_cases','training_sessions','training_participants','evidence_files'] loop
+  execute format('alter table public.%I enable row level security', t);
+  execute format('create policy %I on public.%I for select using (public.is_org_member(organization_id))', t || '_read_members', t);
+  execute format('create policy %I on public.%I for insert with check (public.is_org_editor(organization_id))', t || '_insert_members', t);
+  execute format('create policy %I on public.%I for update using (public.is_org_editor(organization_id)) with check (public.is_org_editor(organization_id))', t || '_update_members', t);
+  execute format('create policy %I on public.%I for delete using (public.is_org_editor(organization_id))', t || '_delete_members', t);
+end loop; end $$;
 create policy memberships_read_self on public.memberships for select using (user_id = auth.uid());
 create policy organizations_read_member on public.organizations for select using (public.is_org_member(id));
-
 create or replace function public.start_initial_workspace(owner_name text)
 returns jsonb language plpgsql security definer set search_path = public, auth
-as $$
-declare org_id uuid; site_id uuid; first_stage uuid;
+as $$ declare org_id uuid; site_id uuid; first_stage uuid;
 begin
   if auth.uid() is null then raise exception 'Authentication required'; end if;
   if exists(select 1 from public.memberships where user_id = auth.uid()) then raise exception 'Workspace already initialized'; end if;
