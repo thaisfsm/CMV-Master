@@ -1,5 +1,7 @@
 -- Sprint operacional (2026-11-04)
 -- Migration aditiva: não apaga tabelas, colunas nem dados existentes.
+-- Idempotente: pode ser executada mais de uma vez (drop ... if exists antes de cada create).
+-- Reversão: supabase/rollback/20261104120000_operational_sprint_down.sql
 -- Adiciona visitas, histórico de respostas, classificação do diagnóstico,
 -- responsáveis em tarefas, vínculo de evidências à visita e endurece políticas.
 
@@ -14,18 +16,23 @@ grant execute on function private.is_org_owner(uuid) to authenticated;
 drop policy if exists memberships_insert_members on public.memberships;
 drop policy if exists memberships_update_members on public.memberships;
 drop policy if exists memberships_delete_members on public.memberships;
+drop policy if exists memberships_insert_owner on public.memberships;
 create policy memberships_insert_owner on public.memberships for insert with check (private.is_org_owner(organization_id));
+drop policy if exists memberships_update_owner on public.memberships;
 create policy memberships_update_owner on public.memberships for update using (private.is_org_owner(organization_id)) with check (private.is_org_owner(organization_id));
+drop policy if exists memberships_delete_owner on public.memberships;
 create policy memberships_delete_owner on public.memberships for delete using (private.is_org_owner(organization_id));
 
 -- Excluir um estabelecimento apaga em cascata todo o histórico: restrito ao proprietário.
 drop policy if exists establishments_delete_members on public.establishments;
+drop policy if exists establishments_delete_owner on public.establishments;
 create policy establishments_delete_owner on public.establishments for delete using (private.is_org_owner(organization_id));
 
 -- Trilha de auditoria imutável pelo app: sem update/delete, e inserção apenas como o próprio usuário.
 drop policy if exists audit_events_update_members on public.audit_events;
 drop policy if exists audit_events_delete_members on public.audit_events;
 drop policy if exists audit_events_insert_members on public.audit_events;
+drop policy if exists audit_events_insert_self on public.audit_events;
 create policy audit_events_insert_self on public.audit_events for insert
   with check (private.is_org_editor(organization_id) and actor_id = auth.uid());
 
@@ -49,11 +56,17 @@ create table if not exists public.visits (
 );
 create index if not exists visits_establishment_date_idx on public.visits (establishment_id, visit_date desc);
 alter table public.visits enable row level security;
+drop policy if exists visits_read_members on public.visits;
 create policy visits_read_members on public.visits for select using (private.is_org_member(organization_id));
+drop policy if exists visits_insert_members on public.visits;
 create policy visits_insert_members on public.visits for insert with check (private.is_org_editor(organization_id));
+drop policy if exists visits_update_members on public.visits;
 create policy visits_update_members on public.visits for update using (private.is_org_editor(organization_id)) with check (private.is_org_editor(organization_id));
+drop policy if exists visits_delete_members on public.visits;
 create policy visits_delete_members on public.visits for delete using (private.is_org_editor(organization_id));
+drop trigger if exists visits_tenant_check on public.visits;
 create trigger visits_tenant_check before insert or update on public.visits for each row execute function public.check_establishment_tenant();
+drop trigger if exists visits_audit_change on public.visits;
 create trigger visits_audit_change after insert or update or delete on public.visits for each row execute function public.audit_row_change();
 
 create or replace function public.check_visit_reference()
@@ -72,12 +85,14 @@ begin
   end if;
   return new;
 end $$;
+drop trigger if exists visits_stage_check on public.visits;
 create trigger visits_stage_check before insert or update of stage_id, establishment_id, organization_id on public.visits
   for each row execute function public.check_visit_reference();
 
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql set search_path = public
 as $$ begin new.updated_at := now(); return new; end $$;
+drop trigger if exists visits_touch on public.visits;
 create trigger visits_touch before update on public.visits for each row execute function public.touch_updated_at();
 
 -- 3. Diagnóstico: classificação, vínculo com visita e histórico -------------
@@ -85,6 +100,7 @@ alter table public.diagnostic_responses add column if not exists visit_id uuid r
 alter table public.diagnostic_responses add column if not exists situation text
   check (situation is null or situation in ('critical','attention','adequate','not_applicable'));
 alter table public.diagnostic_responses add column if not exists notes text;
+drop trigger if exists diagnostic_visit_check on public.diagnostic_responses;
 create trigger diagnostic_visit_check before insert or update of visit_id, establishment_id, organization_id on public.diagnostic_responses
   for each row execute function public.check_visit_reference();
 
@@ -105,6 +121,7 @@ create table if not exists public.diagnostic_response_revisions (
 create index if not exists diagnostic_revisions_response_idx on public.diagnostic_response_revisions (response_id, revised_at desc);
 alter table public.diagnostic_response_revisions enable row level security;
 -- Somente leitura para membros; as linhas são gravadas pelo gatilho abaixo.
+drop policy if exists diagnostic_revisions_read_members on public.diagnostic_response_revisions;
 create policy diagnostic_revisions_read_members on public.diagnostic_response_revisions for select using (private.is_org_member(organization_id));
 
 create or replace function public.record_diagnostic_revision()
@@ -120,6 +137,7 @@ begin
   return new;
 end $$;
 revoke all on function public.record_diagnostic_revision() from public, anon, authenticated;
+drop trigger if exists diagnostic_responses_revision on public.diagnostic_responses;
 create trigger diagnostic_responses_revision after insert or update on public.diagnostic_responses
   for each row execute function public.record_diagnostic_revision();
 
@@ -129,13 +147,16 @@ alter table public.tasks add column if not exists priority text not null default
 alter table public.tasks add column if not exists visit_id uuid references public.visits(id) on delete set null;
 alter table public.tasks add column if not exists created_by uuid references auth.users(id) default auth.uid();
 alter table public.tasks add column if not exists updated_at timestamptz not null default now();
+drop trigger if exists tasks_visit_check on public.tasks;
 create trigger tasks_visit_check before insert or update of visit_id, establishment_id, organization_id on public.tasks
   for each row execute function public.check_visit_reference();
+drop trigger if exists tasks_touch on public.tasks;
 create trigger tasks_touch before update on public.tasks for each row execute function public.touch_updated_at();
 
 -- 5. Evidências vinculadas à visita --------------------------------------------
 alter table public.evidence_files add column if not exists visit_id uuid references public.visits(id) on delete set null;
 alter table public.evidence_files add column if not exists description text;
+drop trigger if exists evidence_visit_check on public.evidence_files;
 create trigger evidence_visit_check before insert or update of visit_id, establishment_id, organization_id on public.evidence_files
   for each row execute function public.check_visit_reference();
 
