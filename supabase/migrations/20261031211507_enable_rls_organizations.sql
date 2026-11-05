@@ -1,0 +1,1 @@
+alter table public.organizations enable row level security;
