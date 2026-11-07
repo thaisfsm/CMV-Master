@@ -11,6 +11,7 @@ A "Pizzaria Enrico" aparece aqui apenas como primeiro cliente (estabelecimento) 
 - Next.js 16 (App Router) + React 19 + TypeScript, aplicação client-side (`app/page.tsx`).
 - Supabase Auth (e-mail/senha) + PostgreSQL com RLS por organização (`supabase/migrations/`).
 - Cálculos de CMV puros em `lib/cmv.mjs`, testados com `node --test`.
+- Pacote de análise da consultoria (ChatGPT): validador `lib/package.mjs`, esquema `lib/package-schema.mjs`, exportação de contexto `lib/context.mjs`; documentação em `docs/pacote-analise/`.
 - Identidade visual: `app/globals.css`, `components/BrandLockup.tsx`, `public/logo-cmv-mestre.png`. Preservar.
 
 ## Comandos
@@ -34,7 +35,7 @@ nunca comitar `.env*` nem usar `service_role` no navegador.
 ## Regras
 
 - Trabalhar em branch própria; `main` só via pull request.
-- `supabase/migrations/`: as 8 migrations até `20261031231128` são cópias exatas (conferidas por MD5) das aplicadas no banco `cmv-mestre`, incluindo a inicial `20261031211139`. `20261104120000_operational_sprint.sql` ainda NÃO foi aplicada na produção (aguarda autorização).
+- `supabase/migrations/`: as 8 migrations até `20261031231128` são cópias exatas (conferidas por MD5) das aplicadas no banco `cmv-mestre`, incluindo a inicial `20261031211139`. `20261104120000_operational_sprint.sql` já está aplicada na produção (conferido por `list_migrations` em 07/11/2026).
 - Testes de integração/e2e só contra Supabase local (`npx supabase start`); ver `auditoria/`.
 - Não aplicar migrations nem alterar Supabase/Vercel remotos sem autorização da Thaís.
 - Não simular dados: módulos sem backend mostram estado vazio de propósito.

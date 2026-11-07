@@ -9,6 +9,7 @@ import { Diagnostic } from "@/components/Diagnostic";
 import { Tasks } from "@/components/Tasks";
 import { Consultant } from "@/components/Consultant";
 import { Reports } from "@/components/Reports";
+import { ContextExport } from "@/components/ContextExport";
 import { supabase, supabaseReady } from "@/lib/supabase";
 import { friendlyError, formatDate, useWorkspace, type Site, type Workspace } from "@/lib/workspace";
 import { diagnosticProgress } from "@/lib/diagnostic.mjs";
@@ -164,7 +165,7 @@ export default function Home() {
         {ws.schemaOutdated && <div className="notice">O banco de dados ainda não recebeu a atualização deste sprint (visitas, classificação e responsáveis). Os dados existentes estão preservados; essas funções ficam disponíveis após a atualização.</div>}
         {ws.error && <div className="notice">{ws.error}</div>}
         {active === "home" && <Dashboard site={site} ws={ws} go={go} />}
-        {active === "implementation" && <Implementation ws={ws} go={go} />}
+        {active === "implementation" && <Implementation site={site} ws={ws} go={go} notify={notify} />}
         {active === "visits" && <Visits site={site} userId={session.user.id} ws={ws} visitId={visitId} setVisitId={setVisitId} notify={notify} go={go} />}
         {active === "diagnostic" && <Diagnostic site={site} userId={session.user.id} ws={ws} visitId={visitId} setVisitId={setVisitId} notify={notify} go={go} />}
         {active === "tasks" && <Tasks site={site} userId={session.user.id} ws={ws} visitId={visitId} notify={notify} />}
@@ -202,7 +203,7 @@ function Dashboard({ site, ws, go }: { site: Site; ws: Workspace; go: (page: str
   </>;
 }
 
-function Implementation({ ws, go }: { ws: Workspace; go: (page: string) => void }) {
+function Implementation({ site, ws, go, notify }: { site: Site; ws: Workspace; go: (page: string) => void; notify: (m: string) => void }) {
   const progress = diagnosticProgress(ws.responses);
   return <><PageTitle eyebrow="METODOLOGIA · LEVANTAR → PADRONIZAR → TREINAR → ACOMPANHAR" title="Implantação guiada" subtitle="As etapas avançam com evidências e critérios, não apenas com o calendário." />
     <div className="stage-list">{ws.stages.map(stage => {
@@ -211,6 +212,7 @@ function Implementation({ ws, go }: { ws: Workspace; go: (page: string) => void 
       return <article className={`stage-card ${stage.stage_number === 1 ? "stage-current" : ""}`} key={stage.id}><div className="stage-number">{String(stage.stage_number).padStart(2, "0")}</div><div className="stage-body"><div className="stage-meta">ETAPA {stage.stage_number} <span>·</span> {new Date(`${stage.target_start}T12:00:00`).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</div><h3>{stage.title}</h3><p>{stage.objective}</p><div className="stage-status"><span className={`status-dot ${stage.status}`} />{statusLabel[stage.status] ?? stage.status}{stageTasks.length > 0 && <span className="muted"> · {done}/{stageTasks.length} tarefas</span>}</div>{stage.stage_number === 1 && <button className="inline-link" onClick={() => go("diagnostic")}>Ver roteiro de diagnóstico <span>→</span></button>}</div><div className="stage-side"><span>{stage.stage_number === 1 ? `${progress.answered}/${progress.total} tópicos` : "Aguardando etapa anterior"}</span><div className="mini-bar"><i style={{ width: stage.stage_number === 1 ? `${progress.percent}%` : "0%" }} /></div></div></article>;
     })}</div>
     {ws.stages.length === 0 && <div className="panel empty-state">Nenhuma etapa encontrada para este estabelecimento.</div>}
+    <ContextExport site={site} ws={ws} notify={notify} />
   </>;
 }
 

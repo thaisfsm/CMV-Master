@@ -1,0 +1,383 @@
+{
+  "formato": "cmv-mestre.contexto",
+  "versao_formato": "1.0",
+  "contexto": {
+    "gerado_em": "2026-11-07T13:30:00.000Z",
+    "gerado_por": "CMV Mestre",
+    "assinatura": "25a64cc2e80586924c2bc7dda1e3df03c911d79447e76baee157c934083eb79a"
+  },
+  "estabelecimento": {
+    "nome": "Pizzaria Enrico",
+    "segmento": "Pizzaria com rodízio"
+  },
+  "diagnostico_id": null,
+  "regras": {
+    "etapas_validas": [
+      "E1",
+      "E2",
+      "E3",
+      "E4",
+      "E5",
+      "E6"
+    ],
+    "niveis_maturidade": [
+      "inexistente",
+      "informal",
+      "implantado",
+      "consolidado"
+    ],
+    "observacao": "Somente leitura. Reutilize os códigos existentes; crie códigos novos só para itens novos. Status de execução, critérios cumpridos e níveis de controle são registrados pela equipe e não podem ser alterados pelo pacote."
+  },
+  "etapas": [
+    {
+      "id": "E1",
+      "titulo": "Diagnóstico geral e organização da base",
+      "objetivo": "Conhecer gestão, operação, cardápio, compras, estoque, controles, documentos e expectativas. Esta visita é diagnóstica: não envolve pesagem, custeio nem padronização de receitas.",
+      "status": "in_progress",
+      "inicio_previsto": "2026-10-19",
+      "fim_previsto": "2026-10-31",
+      "concluida_em": null,
+      "criterios": []
+    },
+    {
+      "id": "E2",
+      "titulo": "Pizzas salgadas e doces",
+      "objetivo": "Levantar e padronizar pizzas após diagnóstico aprovado.",
+      "status": "not_started",
+      "inicio_previsto": "2026-11-01",
+      "fim_previsto": "2026-11-30",
+      "concluida_em": null,
+      "criterios": []
+    },
+    {
+      "id": "E3",
+      "titulo": "Complementos do rodízio",
+      "objetivo": "Mapear e padronizar os complementos do rodízio.",
+      "status": "not_started",
+      "inicio_previsto": "2026-12-01",
+      "fim_previsto": "2026-12-31",
+      "concluida_em": null,
+      "criterios": []
+    },
+    {
+      "id": "E4",
+      "titulo": "Culinária japonesa",
+      "objetivo": "Mapear e padronizar itens japoneses do rodízio de quarta e quinta.",
+      "status": "not_started",
+      "inicio_previsto": "2027-01-01",
+      "fim_previsto": "2027-01-31",
+      "concluida_em": null,
+      "criterios": []
+    },
+    {
+      "id": "E5",
+      "titulo": "Espetinhos e bebidas",
+      "objetivo": "Mapear espetinhos de sexta-feira e bebidas.",
+      "status": "not_started",
+      "inicio_previsto": "2027-02-01",
+      "fim_previsto": "2027-02-28",
+      "concluida_em": null,
+      "criterios": []
+    },
+    {
+      "id": "E6",
+      "titulo": "Consolidação, análise e fechamento",
+      "objetivo": "Consolidar dados, inventário, conciliação, indicadores e fechamento.",
+      "status": "not_started",
+      "inicio_previsto": "2027-03-01",
+      "fim_previsto": "2027-04-18",
+      "concluida_em": null,
+      "criterios": []
+    }
+  ],
+  "tarefas": [
+    {
+      "id": "T-E1-001",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Entrevistar a gestão",
+      "descricao": "Registrar objetivos, expectativas e dificuldades relatadas, identificando as respostas como declaradas.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-002",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Mapear estrutura e responsáveis",
+      "descricao": "Entender áreas, funções e responsáveis pela operação.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-003",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Levantar cardápio e operação",
+      "descricao": "Mapear categorias e processos existentes, sem solicitar receitas ou pesagens.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-004",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Verificar compras, recebimento e estoque",
+      "descricao": "Registrar práticas e documentos já existentes sem presumir controles.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-005",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Listar sistemas e documentos disponíveis",
+      "descricao": "Anotar o que foi apresentado e o que ainda está pendente.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-006",
+      "codigo_provisorio": true,
+      "etapa": "E1",
+      "titulo": "Revisar diagnóstico com a gestão",
+      "descricao": "Aprovar o diagnóstico antes de iniciar pesagem, custeio ou padronização.",
+      "origem": "manual",
+      "status_execucao": "not_started",
+      "verificada": false,
+      "prioridade": "normal",
+      "prazo_aceito": null,
+      "responsavel": null,
+      "concluida_em": null,
+      "depende_de": [],
+      "criterios": [],
+      "estado_planejamento": "liberada",
+      "atrasada": false
+    }
+  ],
+  "tarefas_sem_etapa": 0,
+  "problemas": [],
+  "controles": [],
+  "orientacoes": [],
+  "indicadores": [],
+  "diagnostico": [
+    {
+      "topico": "management",
+      "pergunta": "Como a gestão está organizada e quem decide sobre a operação?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "expectations",
+      "pergunta": "Quais resultados a gestão espera alcançar com a implantação?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "difficulties",
+      "pergunta": "Quais são hoje as maiores dificuldades da operação?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "structure",
+      "pergunta": "Quais áreas e espaços compõem a operação?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "responsibles",
+      "pergunta": "Quem são os responsáveis por cada área e processo?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "menu",
+      "pergunta": "Quais categorias e itens fazem parte do cardápio atual?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "production",
+      "pergunta": "Como a produção e o serviço funcionam em um dia típico?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "purchases",
+      "pergunta": "Como as compras são solicitadas e aprovadas atualmente?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "receiving",
+      "pergunta": "Como é feito o recebimento e a conferência das mercadorias?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "stock",
+      "pergunta": "Como os itens são armazenados e como o estoque é acompanhado?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "systems",
+      "pergunta": "Quais sistemas são utilizados na gestão e na operação?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "controls",
+      "pergunta": "Quais controles já são realizados? Quem os atualiza?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "documents",
+      "pergunta": "Quais documentos, relatórios ou registros estão disponíveis?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "team",
+      "pergunta": "Como a equipe está distribuída por função e turno?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    },
+    {
+      "topico": "visit",
+      "pergunta": "Há alguma observação importante desta visita diagnóstica?",
+      "registrado": false,
+      "confirmacao": null,
+      "situacao": null,
+      "evidencias": 0
+    }
+  ],
+  "visitas": {
+    "total": 0,
+    "ultima_data": null,
+    "em_aberto": 0
+  },
+  "evidencias": {
+    "total": 0
+  },
+  "pacotes_importados": [],
+  "ultimo_fechamento": null,
+  "proximo_passo": [
+    {
+      "id": "T-E1-001",
+      "titulo": "Entrevistar a gestão",
+      "destrava": 0,
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-002",
+      "titulo": "Mapear estrutura e responsáveis",
+      "destrava": 0,
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-003",
+      "titulo": "Levantar cardápio e operação",
+      "destrava": 0,
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-004",
+      "titulo": "Verificar compras, recebimento e estoque",
+      "destrava": 0,
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-005",
+      "titulo": "Listar sistemas e documentos disponíveis",
+      "destrava": 0,
+      "atrasada": false
+    },
+    {
+      "id": "T-E1-006",
+      "titulo": "Revisar diagnóstico com a gestão",
+      "destrava": 0,
+      "atrasada": false
+    }
+  ],
+  "travas": [],
+  "limitacoes": [
+    "Códigos de tarefa provisórios: o banco ainda não guarda external_key. Eles serão gravados iguais na Fase 2.",
+    "Problemas, controles, orientações, indicadores e critérios ainda não têm tabela no banco (Fase 2); as listas vêm vazias."
+  ]
+}
