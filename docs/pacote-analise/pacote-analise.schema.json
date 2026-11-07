@@ -1,0 +1,657 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/thaisfsm/CMV-Master/docs/pacote-analise/pacote-analise.schema.json",
+  "title": "Pacote de análise da consultoria · CMV Mestre",
+  "description": "O pacote recomenda; só a equipe executa. Não contém status de execução, valores medidos nem pedidos de exclusão.",
+  "type": "object",
+  "required": [
+    "formato",
+    "versao_formato",
+    "pacote",
+    "origem",
+    "estabelecimento",
+    "diagnostico",
+    "etapas"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "formato": {
+      "const": "cmv-mestre.pacote-analise"
+    },
+    "versao_formato": {
+      "enum": [
+        "1.0"
+      ]
+    },
+    "pacote": {
+      "type": "object",
+      "required": [
+        "id",
+        "gerado_em",
+        "gerado_por",
+        "fase"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^PKG-[A-Z0-9]+-\\d{8}-E[1-6]-\\d{2}$",
+          "description": "PKG-<CLIENTE>-<AAAAMMDD>-<fase>-<NN>. Nunca reutilizar."
+        },
+        "substitui_pacote": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^PKG-[A-Z0-9]+-\\d{8}-E[1-6]-\\d{2}$"
+        },
+        "gerado_em": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gerado_por": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fase": {
+          "enum": [
+            "E1",
+            "E2",
+            "E3",
+            "E4",
+            "E5",
+            "E6"
+          ],
+          "description": "Fase da implantação que este pacote planeja."
+        },
+        "observacao": {
+          "type": "string"
+        }
+      }
+    },
+    "origem": {
+      "type": "object",
+      "required": [
+        "tipo",
+        "diagnostico_id",
+        "backup_sha256",
+        "contexto_assinatura"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tipo": {
+          "enum": [
+            "diagnostico-enrico",
+            "fechamento-fase"
+          ],
+          "description": "diagnostico-enrico no primeiro pacote; fechamento-fase depois que uma fase for fechada."
+        },
+        "diagnostico_id": {
+          "type": "string",
+          "pattern": "^diag-[A-Za-z0-9_-]+$"
+        },
+        "backup_arquivo": {
+          "type": "string"
+        },
+        "backup_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "fase_fechada": {
+          "enum": [
+            "E1",
+            "E2",
+            "E3",
+            "E4",
+            "E5",
+            "E6"
+          ]
+        },
+        "contexto_assinatura": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Copiar de contexto.assinatura do arquivo de contexto exportado pelo CMV Mestre."
+        }
+      },
+      "if": {
+        "properties": {
+          "tipo": {
+            "const": "fechamento-fase"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "fase_fechada"
+        ]
+      }
+    },
+    "estabelecimento": {
+      "type": "object",
+      "required": [
+        "nome"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "nome": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "diagnostico": {
+      "type": "object",
+      "required": [
+        "resumo"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "resumo": {
+          "type": "string",
+          "minLength": 1
+        },
+        "problemas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "titulo",
+              "descricao",
+              "topico",
+              "gravidade",
+              "confirmacao"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^PRB-\\d{3}$"
+              },
+              "titulo": {
+                "type": "string",
+                "minLength": 1
+              },
+              "descricao": {
+                "type": "string",
+                "minLength": 1
+              },
+              "topico": {
+                "enum": [
+                  "management",
+                  "expectations",
+                  "difficulties",
+                  "structure",
+                  "responsibles",
+                  "menu",
+                  "production",
+                  "purchases",
+                  "receiving",
+                  "stock",
+                  "systems",
+                  "controls",
+                  "documents",
+                  "team",
+                  "visit"
+                ]
+              },
+              "gravidade": {
+                "enum": [
+                  "critico",
+                  "atencao",
+                  "melhoria"
+                ]
+              },
+              "confirmacao": {
+                "enum": [
+                  "confirmada",
+                  "declarada",
+                  "hipotese"
+                ]
+              },
+              "base": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Perguntas do backup que sustentam o problema (ex.: e10-p02)."
+              }
+            }
+          }
+        }
+      }
+    },
+    "prioridades": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ordem",
+          "problema",
+          "motivo"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "ordem": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "problema": {
+            "type": "string",
+            "pattern": "^PRB-\\d{3}$"
+          },
+          "motivo": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "controles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "topico",
+          "nivel_observado",
+          "nivel_alvo",
+          "etapa_prevista",
+          "criterio_maturidade"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^CTL-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "topico": {
+            "enum": [
+              "management",
+              "expectations",
+              "difficulties",
+              "structure",
+              "responsibles",
+              "menu",
+              "production",
+              "purchases",
+              "receiving",
+              "stock",
+              "systems",
+              "controls",
+              "documents",
+              "team",
+              "visit"
+            ]
+          },
+          "nivel_observado": {
+            "enum": [
+              "inexistente",
+              "informal",
+              "implantado",
+              "consolidado"
+            ],
+            "description": "O que a análise viu no backup. O nível registrado no sistema prevalece."
+          },
+          "nivel_alvo": {
+            "enum": [
+              "informal",
+              "implantado",
+              "consolidado"
+            ]
+          },
+          "etapa_prevista": {
+            "enum": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6"
+            ],
+            "description": "Etapa em que o controle deve nascer. Não pode ser antes dos pré-requisitos."
+          },
+          "pre_requisitos": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^CTL-[A-Z0-9]+(?:-[A-Z0-9]+)*(?::(?:informal|implantado|consolidado))?$"
+            }
+          },
+          "criterio_maturidade": {
+            "type": "string",
+            "minLength": 1
+          },
+          "justificativa": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "etapas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6"
+            ],
+            "description": "Só as seis etapas do contrato."
+          },
+          "objetivo_recomendado": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criterios_etapa": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "texto"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^E[1-6]-C\\d{1,2}$"
+                },
+                "texto": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exige_evidencia": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "tarefas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "titulo",
+                "prioridade_recomendada",
+                "justificativa"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^T-E[1-6]-\\d{3}$",
+                  "description": "T-<etapa>-<NNN>; o número da etapa precisa ser o da etapa que contém a tarefa."
+                },
+                "titulo": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "descricao": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "problema": {
+                  "type": "string",
+                  "pattern": "^PRB-\\d{3}$"
+                },
+                "controle": {
+                  "type": "string",
+                  "pattern": "^CTL-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+                  "description": "Controle que esta tarefa cria ou evolui."
+                },
+                "prioridade_recomendada": {
+                  "enum": [
+                    "alta",
+                    "normal",
+                    "baixa"
+                  ]
+                },
+                "prazo_recomendado": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date",
+                  "description": "Sugestão. Nunca gera atraso; o prazo real é aceito pela consultora."
+                },
+                "responsavel_recomendado": {
+                  "type": "string",
+                  "description": "Função, não nome de pessoa."
+                },
+                "justificativa": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "depende_de": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^(?:T-E[1-6]-\\d{3}|T-E[1-6]-\\d{3}-C\\d{1,2}|E[1-6]-C\\d{1,2}|CTL-[A-Z0-9]+(?:-[A-Z0-9]+)*:(?:informal|implantado|consolidado))$"
+                  },
+                  "description": "Tarefas, critérios ou controles em nível (CTL-X:implantado)."
+                },
+                "criterios": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "texto"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^T-E[1-6]-\\d{3}-C\\d{1,2}$"
+                      },
+                      "texto": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "exige_evidencia": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "orientacoes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^ORI-\\d{3}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "orientacoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "titulo",
+          "texto",
+          "publico"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ORI-\\d{3}$"
+          },
+          "titulo": {
+            "type": "string",
+            "minLength": 1
+          },
+          "texto": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publico": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "indicadores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "definicao",
+          "unidade",
+          "sentido",
+          "frequencia",
+          "etapa_inicio"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^IND-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "definicao": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unidade": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sentido": {
+            "enum": [
+              "subir",
+              "descer"
+            ]
+          },
+          "linha_de_base": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Só com fonte. Sem controle existente, null."
+          },
+          "fonte_linha_de_base": {
+            "type": "string"
+          },
+          "meta": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "frequencia": {
+            "enum": [
+              "diaria",
+              "semanal",
+              "quinzenal",
+              "mensal",
+              "por-fase"
+            ]
+          },
+          "etapa_inicio": {
+            "enum": [
+              "E1",
+              "E2",
+              "E3",
+              "E4",
+              "E5",
+              "E6"
+            ]
+          },
+          "controle": {
+            "type": "string",
+            "pattern": "^CTL-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          }
+        },
+        "if": {
+          "properties": {
+            "linha_de_base": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "linha_de_base"
+          ]
+        },
+        "then": {
+          "required": [
+            "fonte_linha_de_base"
+          ]
+        }
+      }
+    },
+    "sugestoes_de_status": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tipo",
+          "id",
+          "sugestao",
+          "motivo"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "tipo": {
+            "enum": [
+              "problema",
+              "tarefa",
+              "controle"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sugestao": {
+            "enum": [
+              "resolver",
+              "cancelar",
+              "reabrir"
+            ]
+          },
+          "motivo": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "proximo_passo_recomendado": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^T-E[1-6]-\\d{3}$"
+      }
+    }
+  }
+}

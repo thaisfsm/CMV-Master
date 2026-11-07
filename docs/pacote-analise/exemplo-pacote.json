@@ -1,0 +1,166 @@
+{
+  "formato": "cmv-mestre.pacote-analise",
+  "versao_formato": "1.0",
+  "pacote": {
+    "id": "PKG-ENRICO-20261107-E1-01",
+    "substitui_pacote": null,
+    "gerado_em": "2026-11-07T14:00:00-03:00",
+    "gerado_por": "ChatGPT, revisado por Thaís",
+    "fase": "E1",
+    "observacao": "EXEMPLO ILUSTRATIVO. Os textos de problemas, controles e tarefas novas não são dados reais da Enrico."
+  },
+  "origem": {
+    "tipo": "diagnostico-enrico",
+    "diagnostico_id": "diag-exemplo01",
+    "backup_arquivo": "diagnostico-enrico_exemplo.zip",
+    "backup_sha256": "03c1d2dfe581ac2dd22b9301f71dfcad3a365ebed1f056da3174ec5510515a7a",
+    "contexto_assinatura": "25a64cc2e80586924c2bc7dda1e3df03c911d79447e76baee157c934083eb79a"
+  },
+  "estabelecimento": { "nome": "Pizzaria Enrico" },
+  "diagnostico": {
+    "resumo": "Exemplo: compras sem cadastro de insumos e recebimento sem conferência. Os controles ainda não existem e serão criados a partir da Etapa 2.",
+    "problemas": [
+      {
+        "id": "PRB-001",
+        "titulo": "Recebimento sem conferência",
+        "descricao": "Exemplo: a mercadoria é guardada sem comparar quantidade com a nota.",
+        "topico": "receiving",
+        "gravidade": "critico",
+        "confirmacao": "declarada",
+        "base": ["e10-p01", "e10-p02"]
+      },
+      {
+        "id": "PRB-002",
+        "titulo": "Insumos sem cadastro padronizado",
+        "descricao": "Exemplo: o mesmo insumo é comprado em unidades diferentes sem registro.",
+        "topico": "purchases",
+        "gravidade": "atencao",
+        "confirmacao": "hipotese",
+        "base": ["e09-p03"]
+      }
+    ]
+  },
+  "prioridades": [
+    { "ordem": 1, "problema": "PRB-002", "motivo": "Sem cadastro de insumos não há como conferir recebimento." },
+    { "ordem": 2, "problema": "PRB-001", "motivo": "Afeta todo o custo de insumos." }
+  ],
+  "controles": [
+    {
+      "id": "CTL-CADASTRO-INSUMOS",
+      "nome": "Cadastro de insumos com unidade de compra e de uso",
+      "topico": "purchases",
+      "nivel_observado": "inexistente",
+      "nivel_alvo": "implantado",
+      "etapa_prevista": "E2",
+      "pre_requisitos": [],
+      "criterio_maturidade": "Todos os insumos das pizzas cadastrados e usados nas compras da semana.",
+      "justificativa": "É a base de recebimento, estoque e ficha técnica."
+    },
+    {
+      "id": "CTL-RECEBIMENTO",
+      "nome": "Conferência de recebimento",
+      "topico": "receiving",
+      "nivel_observado": "inexistente",
+      "nivel_alvo": "implantado",
+      "etapa_prevista": "E2",
+      "pre_requisitos": ["CTL-CADASTRO-INSUMOS:implantado"],
+      "criterio_maturidade": "Duas semanas seguidas de notas conferidas e registradas."
+    }
+  ],
+  "etapas": [
+    {
+      "id": "E1",
+      "criterios_etapa": [
+        { "id": "E1-C1", "texto": "Diagnóstico revisado e aprovado pela gestão", "exige_evidencia": true }
+      ],
+      "tarefas": [
+        {
+          "id": "T-E1-006",
+          "titulo": "Revisar diagnóstico com a gestão",
+          "descricao": "Apresentar problemas e prioridades e registrar a aprovação.",
+          "prioridade_recomendada": "alta",
+          "prazo_recomendado": "2026-11-14",
+          "justificativa": "A Etapa 2 só começa com o diagnóstico aprovado.",
+          "depende_de": ["T-E1-001", "T-E1-002", "T-E1-003", "T-E1-004", "T-E1-005", "T-E1-007"],
+          "criterios": [
+            { "id": "T-E1-006-C1", "texto": "Relatório apresentado à gestão", "exige_evidencia": false },
+            { "id": "T-E1-006-C2", "texto": "Aprovação registrada na visita", "exige_evidencia": true }
+          ]
+        },
+        {
+          "id": "T-E1-007",
+          "titulo": "Listar os insumos comprados no último mês",
+          "descricao": "Levantar nomes e unidades de compra a partir das notas, sem pesar nem custear.",
+          "problema": "PRB-002",
+          "prioridade_recomendada": "alta",
+          "prazo_recomendado": "2026-11-12",
+          "responsavel_recomendado": "Responsável pelas compras",
+          "justificativa": "É o insumo do cadastro que nasce na Etapa 2.",
+          "criterios": [
+            { "id": "T-E1-007-C1", "texto": "Lista anexada como evidência", "exige_evidencia": true }
+          ],
+          "orientacoes": ["ORI-001"]
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "criterios_etapa": [
+        { "id": "E2-C1", "texto": "Conferência de recebimento no nível implantado", "exige_evidencia": true }
+      ],
+      "tarefas": [
+        {
+          "id": "T-E2-001",
+          "titulo": "Montar o cadastro de insumos",
+          "problema": "PRB-002",
+          "controle": "CTL-CADASTRO-INSUMOS",
+          "prioridade_recomendada": "alta",
+          "prazo_recomendado": null,
+          "justificativa": "Cria o controle que ainda não existe.",
+          "depende_de": ["T-E1-006", "T-E1-007"],
+          "criterios": [
+            { "id": "T-E2-001-C1", "texto": "Cadastro com unidade de compra e de uso para os insumos das pizzas", "exige_evidencia": true }
+          ]
+        },
+        {
+          "id": "T-E2-002",
+          "titulo": "Implantar a conferência de recebimento",
+          "problema": "PRB-001",
+          "controle": "CTL-RECEBIMENTO",
+          "prioridade_recomendada": "alta",
+          "justificativa": "Só faz sentido depois do cadastro de insumos.",
+          "depende_de": ["T-E2-001", "CTL-CADASTRO-INSUMOS:implantado"],
+          "criterios": [
+            { "id": "T-E2-002-C1", "texto": "Balança disponível no recebimento", "exige_evidencia": true },
+            { "id": "T-E2-002-C2", "texto": "Duas semanas de notas conferidas", "exige_evidencia": true }
+          ],
+          "orientacoes": ["ORI-001"]
+        }
+      ]
+    }
+  ],
+  "orientacoes": [
+    {
+      "id": "ORI-001",
+      "titulo": "Como registrar insumos e notas",
+      "texto": "Usar sempre o nome do cadastro e anotar a unidade da nota.",
+      "publico": "responsável pelas compras"
+    }
+  ],
+  "indicadores": [
+    {
+      "id": "IND-RECEB-CONFERIDO",
+      "nome": "Notas conferidas no recebimento",
+      "definicao": "Notas conferidas ÷ notas recebidas na semana",
+      "unidade": "%",
+      "sentido": "subir",
+      "linha_de_base": null,
+      "meta": 100,
+      "frequencia": "semanal",
+      "etapa_inicio": "E2",
+      "controle": "CTL-RECEBIMENTO"
+    }
+  ],
+  "sugestoes_de_status": [],
+  "proximo_passo_recomendado": ["T-E1-007"]
+}
